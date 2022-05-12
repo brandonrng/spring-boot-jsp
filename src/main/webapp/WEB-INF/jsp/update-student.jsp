@@ -6,12 +6,10 @@
         <title>Update Student</title>
     </head>
     <body>
-        <c:if test="${updateStudentSuccess}">
-            <div>Successfully updated Student with ID: ${savedStudent.id}</div>
-        </c:if>
 
-        <c:url var="update_Student_url" value="/Student/updateStudent"/>
+        <c:url var="update_student_url" value="/student/updateStudent/{id}"/>
         <form:form action="${update_student_url}" method="post" modelAttribute="student">
+            <form:label path="id"></form:label> <form:input type="hidden" path="id"/>
             <form:label path="firstName">Update First Name: </form:label> <form:input type="text" path="firstName"/>
             <form:label path="lastName">Update Last Name: </form:label> <form:input type="text" path="lastName"/>
             <form:label path="contactNum">Update Parent/Guardian contact number: </form:label> <form:input path="contactNum"/>

@@ -64,46 +64,47 @@ public class StudentController {
         redirectAttributes.addFlashAttribute("addStudentSuccess", true);
         return redirectView;
     }
-    
-    
+    //---------------------------------------------------------------------------------------------------------------------
+    @GetMapping("/updateStudent/{id}")
+    public String updateStudent(Model m,@PathVariable int id) {
+    	System.out.println("inside update student b4 anything happens");
+        Student updateS = entityManager.find(Student.class, id);  
+        m.addAttribute("student", updateS);
+		System.out.println(updateS.getId() + " == " + id);
+        return "update-student";
+    }
+
+    @PostMapping("/updateStudent/{id}")
+    @Transactional
+    @ResponseBody
+    public RedirectView updateStudent(@ModelAttribute("student") Student student, RedirectAttributes redirectAttributes) {
+        final RedirectView redirectView = new RedirectView("/student/viewStudents", true);
+        entityManager.merge(student);
+        return redirectView;
+    }
+    //----------------------------------------------------------------------------------------------------------------------
 //    @GetMapping("/updateStudent")
 //    public String updateStudentView(Model model) {
 //        model.addAttribute("student", new Student());
 //        return "update-student";
 //    }
     
-    @GetMapping("/updateStudent/{id}/{firstName}")
-	@Transactional
-	@ResponseBody
-	@Modifying
-	public void updateStudent(@PathVariable int id, @PathVariable String firstName) {
-    	//using jql
-//		Query update = entityManager.createQuery("update from Student s set firstName =?1 where s.id=?0"); 
-//		update.setParameter(0, id);
-//		update.setParameter(1, firstName);
-//		update.executeUpdate();
-    	//------------------------
-    	System.out.println(id + " " + firstName);
-    	//using entityManager
-		Student updateS = entityManager.find(Student.class, id);
-		updateS.setFirstName(firstName);
-    	
-	}
+//    @GetMapping("/updateStudent/{id}/{firstName}")
+//	@Transactional
+//	@ResponseBody
+//	public void updateStudent(@PathVariable int id, @PathVariable String firstName) {
+//    	//using jql
+////		Query update = entityManager.createQuery("update from Student s set firstName =?1 where s.id=?0"); 
+////		update.setParameter(0, id);
+////		update.setParameter(1, firstName);
+////		update.executeUpdate();
+//    	//------------------------
+//    	System.out.println(id + " " + firstName);
+//    	//using entityManager
+//		Student updateS = entityManager.find(Student.class, id);
+//		updateS.setFirstName(firstName);	
+//	}
 
-//    //This one was called when you POST from a form tag
-//    @PostMapping("/updateStudent")
-//    @Transactional
-//    public RedirectView updateStudent(@ModelAttribute("student") Student student, RedirectAttributes redirectAttributes) {
-//        final RedirectView redirectView = new RedirectView("/student/updateStudent/", true);
-//
-//		entityManager.persist(student);
-//		
-//        redirectAttributes.addFlashAttribute("savedStudent", student);
-//        redirectAttributes.addFlashAttribute("updateStudentSuccess", true);
-//        return redirectView;
-//    }
-    
-	
 	@GetMapping("/viewStudents")
     public String viewStudent(Model model) {
 		Query readAll = entityManager.createQuery("select s from Student s");
@@ -116,9 +117,12 @@ public class StudentController {
 	@GetMapping("/deleteStudent/{id}")
 	@Transactional
 	@ResponseBody
-	public void deleteStudent(@PathVariable int id) {
+	public RedirectView deleteStudent(@PathVariable int id) {
+        final RedirectView redirectView = new RedirectView("/student/viewStudents", true);
 		Query delete = entityManager.createQuery("delete from Student s where s.id=?0");
 		delete.setParameter(0, id);
 		delete.executeUpdate();
+		return redirectView;
+		
 	}
 }

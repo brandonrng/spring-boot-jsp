@@ -18,4 +18,9 @@
             <input type="submit" value="submit"/>
         </form:form>
     </body>
+    <body>
+        <form:form action= "viewStudents" method = "get">           
+           	<input type="submit" value="view students"/>
+		</form:form>
+    </body>
 </html>
