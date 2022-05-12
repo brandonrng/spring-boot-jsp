@@ -9,17 +9,19 @@
         <table>
             <thead>
                 <tr>
-                    <th>ISBN</th>
-                    <th>Name</th>
-                    <th>Author</th>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Parent/Guardian Contact Number</th>
                 </tr>
             </thead>
             <tbody>
-                <c:forEach items="${books}" var="book">
+                <c:forEach items="${student}" var="student">
                     <tr>
-                        <td>${book.isbn}</td>
-                        <td>${book.name}</td>
-                        <td>${book.author}</td>
+                    	<td>${student.id}</td>
+                        <td>${student.firstName}</td>
+                        <td>${student.lastName}</td>
+                        <td>${student.contactNum}</td>
                     </tr>
                 </c:forEach>
             </tbody>

@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookData {
-    private String isbn;
-    private String name;
-    private String author;
+public class StudentData {
+    private int id;
+    private String firstName;
+    private String lastName;
+    private String contactNum;
 }

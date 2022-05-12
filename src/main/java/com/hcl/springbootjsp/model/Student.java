@@ -14,11 +14,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Book {
+public class Student {
 	@Id
     @GeneratedValue
     private int id; 
-    private String isbn;
-    private String name;
-    private String author;
+    private String firstName;
+    private String lastName;
+    private String contactNum;
 }
