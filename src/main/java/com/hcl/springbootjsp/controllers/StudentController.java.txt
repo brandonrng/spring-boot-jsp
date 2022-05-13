@@ -29,11 +29,11 @@ import com.hcl.springbootjsp.model.Student;
 @Controller
 @RequestMapping("/student")
 public class StudentController {
-// private List<BookData> initData = new ArrayList<>();
+//	private List<BookData> initData = new ArrayList<>();
 
 	/*
 	 * private final BookService bookService;
-	 *
+	 * 
 	 * public BookController(BookService bookService) { this.bookService =
 	 * bookService; }
 	 */
@@ -42,10 +42,10 @@ public class StudentController {
 	private EntityManager entityManager;
 
 	public StudentController() {
-// old way
-// initData.add( new StudentData("Brandon", "Quinones", "99999999"));
-// initData.add(new StudentData("Nathan", "Smith", "888888888"));
-// initData.add(new StudentData("Ricky", "Nguyen", "777777777"));
+		// old way
+//	    initData.add( new StudentData("Brandon", "Quinones", "99999999"));
+//	    initData.add(new StudentData("Nathan", "Smith", "888888888"));
+//	    initData.add(new StudentData("Ricky", "Nguyen", "777777777"));
 	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,78 +65,35 @@ public class StudentController {
 	public RedirectView registerNewUser(@ModelAttribute("user") NewUser newUser,
 			RedirectAttributes redirectAttributes) {
 		final RedirectView redirectView = new RedirectView("/student/login", true);
-		final RedirectView redirectView1 = new RedirectView("/student/register", true);
 
-		Query readAll = entityManager.createQuery("select u from NewUser u where u.username=?0 and u.password=?1");
-		readAll.setParameter(0, newUser.getUsername());
-		readAll.setParameter(1, newUser.getPassword());
-		List<NewUser> resultListAll = readAll.getResultList();
+		entityManager.persist(newUser);
 
-		// if it exists, add the user name to the session
-		if (resultListAll.size() == 0) {
-			entityManager.persist(newUser);
-			redirectAttributes.addFlashAttribute("savedNewUser", newUser);
-			redirectAttributes.addFlashAttribute("registerNewUserSuccess", true);
-			return redirectView;
-		} else {
-//redirectAttributes.addFlashAttribute("registerNewUserSuccess", false);
-			return redirectView1;
-		}
-	}
-
+		redirectAttributes.addFlashAttribute("savedNewUser", newUser);
+		redirectAttributes.addFlashAttribute("registerNewUserSuccess", true);
+		return redirectView;
+	}	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////// END REGISTER /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////// LOGIN ///////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	@GetMapping("/login")
-	public String login(Model model) {
-		model.addAttribute("newUser", new NewUser());
-		return "login-new-user";
+	@PostMapping("/login")
+	public RedirectView loginSubmit(@ModelAttribute("user") NewUser newUser,
+			HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		
+				return null;
+		
 	}
 	
-	@GetMapping("/logoff")
-	public String login(HttpSession session) {
-		session.invalidate();
-		return "logout-new-user";
-	}
-
-//called when you post from a tag
-	@Transactional
-	@PostMapping("/login")
-	public RedirectView loginSubmit(@ModelAttribute("user") NewUser user, HttpSession session,
-			RedirectAttributes redirectAttributes) {
-		final RedirectView redirectView = new RedirectView("/student/viewStudents", true);
-		final RedirectView redirectView1 = new RedirectView("/student/login", true);
-		System.out.println("line 106: user == " + user);
-//check if the user name and password exist in the database,
-		Query readAll = entityManager.createQuery("select u from NewUser u where u.username=?0 and u.password=?1");
-		readAll.setParameter(0, user.getUsername());
-		readAll.setParameter(1, user.getPassword());
-		List<NewUser> resultListAll = readAll.getResultList();
-		System.out.println("printing reserved list... " + resultListAll.size());
-		// if it exists, add the user name to the session
-		if (resultListAll.size() == 1) {
-			redirectAttributes.addFlashAttribute("savedNewUser", user);
-			redirectAttributes.addFlashAttribute("registerNewUserSuccess", true);
-			session.setAttribute("loggedInUser", resultListAll.get(0));
-			return redirectView;
-		} else {
-//redirect to error page
-			redirectAttributes.addFlashAttribute("savedNewUser", user);
-			redirectAttributes.addFlashAttribute("loginFailed", true);
-			return redirectView1;
-		}
-
-	}
-
+	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////END LOGIN ///////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////// ADD STUDENT /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// To render the form for the book
+	
+	// To render the form for the book
 	@GetMapping("/addStudent")
 	public String addStudentView(Model model) {
 		model.addAttribute("student", new Student());
@@ -155,6 +112,7 @@ public class StudentController {
 		redirectAttributes.addFlashAttribute("addStudentSuccess", true);
 		return redirectView;
 	}
+	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// END ADD STUDENT /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,28 +137,21 @@ public class StudentController {
 		entityManager.merge(student);
 		return redirectView;
 	}
+	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////// END UPDATE STUDENT ///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////// VIEW STUDENT /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 	@GetMapping("/viewStudents")
-	public String viewStudent(Model model, HttpSession session) {
-		NewUser user = (NewUser) session.getAttribute("loggedInUser");
-		final RedirectView redirectView = new RedirectView("/student/viewStudents", true);
-		final RedirectView redirectView1 = new RedirectView("/student/login", true);
-		System.out.println("user****=" + user);
-//already logged in
-		if (user != null) {
-			Query readAll = entityManager.createQuery("select s from Student s");
-			List<Student> resultListAll = readAll.getResultList();
-			resultListAll.forEach(System.out::println);
-			model.addAttribute("student", resultListAll);
-			return "view-student";
-		} else {
-			return "redirect:/student/login";
-		}
+	public String viewStudent(Model model) {
+		Query readAll = entityManager.createQuery("select s from Student s");
+		List<Student> resultListAll = readAll.getResultList();
+		resultListAll.forEach(System.out::println);
+		model.addAttribute("student", resultListAll);
+		return "view-student";
 	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,6 +159,7 @@ public class StudentController {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////// DELETE STUDENT /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 	@GetMapping("/deleteStudent/{id}")
 	@Transactional
@@ -218,6 +170,7 @@ public class StudentController {
 		delete.setParameter(0, id);
 		delete.executeUpdate();
 		return redirectView;
+		
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////// END DELETE STUDENT ////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

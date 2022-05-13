@@ -11,7 +11,7 @@
             <div>Successfully logged in: ${newUser.username}</div>
         </c:if>
 
-        <c:url var="login_user_url" value="/student/register"/>
+        <c:url var="login_user_url" value="/student/login"/>
         <form:form action="${login_user_url}" method="post" modelAttribute="newUser">
             <form:label path="username">username: </form:label> <form:input type="text" path="username"/>
             <form:label path="password">password: </form:label> <form:input type="password" path="password"/>
